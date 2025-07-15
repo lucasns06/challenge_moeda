@@ -1,5 +1,8 @@
 package br.com.alura.challengemoeda.principal;
 
+import br.com.alura.challengemoeda.modelos.Moeda;
+import com.google.gson.Gson;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -9,6 +12,7 @@ import java.util.Scanner;
 
 public class Principal {
     static double valor;
+    static String API_KEY = "b6131d2fd2a7174b50fbdb5a";
     public static void main(String[] args) throws IOException, InterruptedException {
         Scanner leitor = new Scanner(System.in);
 
@@ -37,13 +41,13 @@ public class Principal {
                 System.out.println("Dólar =>> Peso argentino");
                 System.out.print("Digite o valor: ");
                 valor = leitor.nextDouble();
-                Calcular("USD", "ARG", valor);
+                Calcular("USD", "ARS", valor);
                 break;
             case 2:
                 System.out.println("Peso argentino =>> Dólar");
                 System.out.print("Digite o valor: ");
                 valor = leitor.nextDouble();
-                Calcular("ARG", "USD", valor);
+                Calcular("ARS", "USD", valor);
                 break;
             case 3:
                 System.out.println("Dólar =>> Real brasileiro");
@@ -83,12 +87,18 @@ public class Principal {
 
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://v6.exchangerate-api.com/v6/b6131d2fd2a7174b50fbdb5a/pair/" + moeda1 + "/"+ moeda2 + "/" + valor))
+                .uri(URI.create("https://v6.exchangerate-api.com/v6/" + API_KEY + "/pair/" + moeda1 + "/"+ moeda2 + "/" + valor))
                 .build();
 
         HttpResponse<String> response = client
                 .send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println(response.body());
 
+        String json = response.body();
+        //System.out.println(json);
+
+        Gson gson = new Gson();
+        Moeda moeda = gson.fromJson(json, Moeda.class);
+        System.out.println("\nValor em " + moeda1 + ": " + valor);
+        System.out.println("\nValor convertido para "+ moeda2 + ": " + moeda.getValor());
     }
 }
