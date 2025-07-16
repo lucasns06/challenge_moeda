@@ -120,6 +120,7 @@ public class Principal {
                 break;
             default:
                 System.out.println("opção invalida, saindo...");
+                loopWhile = false;
                 break;
         }
     }
